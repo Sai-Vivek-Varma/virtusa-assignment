@@ -2,11 +2,11 @@ import re
 
 def moderator():
     posts = [
-        "UserA: Hey, check out my new course at https://www.anurag-university.edu.in",
-        "UserB: you all are so bad and toxic! I hate everyone in this BaD Toxic Hateful group.",
-        "User123: Who wants to join the TOXIC club?",
-        "User996: Another bad link here      http://badhatefultoxic-site.com to earn money",
-        "UserD: Have a baD day folks."
+        "Luffy: Hey, check out my new course at https://www.anurag-university.edu.in",
+        "Zoro: you all are so bad and toxic! I hate everyone in this BaD Toxic Hateful group.",
+        "Nami: Who wants to join the TOXIC club?",
+        "Sanji: Another bad link here      http://badhatefultoxic-site.com to earn money",
+        "Usopp: Have a baD day folks."
     ]
 
     banned_words = ["bad", "toxic", "hate"]

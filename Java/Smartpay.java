@@ -32,8 +32,7 @@ class Smartpay implements Billable {
         System.out.println("\n--- TGPDCL Electricity Bill ---\n");
         System.out.println("Customer Name : " + name);
         System.out.println("Units Consumed : " + units);
-        System.out.println("Tax Amount : Rs. " + amount);
-        System.out.println("Final Total : Rs. " + amount);
+        System.out.println("Bill Amount : Rs. " + amount);
         System.out.println("\n--------------------------------\n");
     }
 

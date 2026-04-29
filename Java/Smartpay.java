@@ -1,36 +1,62 @@
 import java.util.Scanner;
 
+class InvalidReadingException extends Exception {
+    public InvalidReadingException(String msg) {
+        super(msg);
+    }
+}
+
+class InvalidUnitException extends Exception {
+    public InvalidUnitException(String msg) {
+        super(msg);
+    }
+}
+
 interface Billable {
-    double calculateTotal(int units);
+    double calculateTotal(int units) throws InvalidUnitException;
+}
+
+class Customer {
+    String name;
+    int prevReading, currReading;
+
+    Customer(String name, int prev, int curr) {
+        this.name = name;
+        this.prevReading = prev;
+        this.currReading = curr;
+    }
 }
 
 class Smartpay implements Billable {
-    @Override
-    public double calculateTotal(int units) {
-        double tax = 0;
 
-        if (units <= 100) {
-            tax = units * 1;
-        } else if (units <= 300) {
-            tax = (100 * 1) + ((units - 100) * 2);
-        } else {
-            tax = (100 * 1) + (200 * 2) + ((units - 300) * 5);
+    @Override
+    public double calculateTotal(int units) throws InvalidUnitException {
+        if (units < 0) {
+            throw new InvalidUnitException("Units cannot be negative.");
         }
 
-        return tax;
+        if (units <= 100)
+            return units * 1;
+        else if (units <= 300)
+            return (100 * 1) + ((units - 100) * 2);
+
+        return (100 * 1) + (200 * 2) + ((units - 300) * 5);
     }
 
-    void printReceipt(String name, int prev, int curr) {
+    public int calculateUnits(int prev, int curr) throws InvalidReadingException {
         if (prev > curr) {
-            System.out.println("Previous reading > Current reading");
-            return;
+            throw new InvalidReadingException("Previous reading > Current reading");
         }
+        return curr - prev;
+    }
 
-        int units = curr - prev;
+    void printReceipt(Customer c) throws InvalidReadingException, InvalidUnitException {
+
+        int units = calculateUnits(c.prevReading, c.currReading);
         double amount = calculateTotal(units);
 
         System.out.println("\n--- TGPDCL Electricity Bill ---\n");
-        System.out.println("Customer Name : " + name);
+        System.out.println("Customer Name : " + c.name);
         System.out.println("Units Consumed : " + units);
         System.out.printf("Bill Amount : $ %.2f\n", amount);
         System.out.println("\n--------------------------------\n");
@@ -54,9 +80,13 @@ class Smartpay implements Billable {
                 int prev = Integer.parseInt(sc.nextLine());
                 System.out.print("Enter current meter reading: ");
                 int curr = Integer.parseInt(sc.nextLine());
-                s.printReceipt(name, prev, curr);
-            } catch (Exception e) {
-                System.out.println("Invalid input. Please enter whole numbers for the meter readings.\n");
+
+                Customer c1 = new Customer(name, prev, curr);
+                s.printReceipt(c1);
+            } catch (InvalidReadingException | InvalidUnitException e) {
+                System.out.println("Error: " + e.getMessage());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Enter numbers only.");
             }
         }
 

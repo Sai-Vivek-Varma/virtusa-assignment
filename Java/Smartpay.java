@@ -13,7 +13,7 @@ class InvalidUnitException extends Exception {
 }
 
 interface Billable {
-    double calculateTotal(int units) throws InvalidUnitException;
+    double calculateTotal(int units);
 }
 
 class Customer {
@@ -29,17 +29,11 @@ class Customer {
 
 class Smartpay implements Billable {
 
-    @Override
-    public double calculateTotal(int units) throws InvalidUnitException {
-        if (units < 0) {
-            throw new InvalidUnitException("Units cannot be negative.");
-        }
-
+    public double calculateTotal(int units) {
         if (units <= 100)
             return units * 1;
         else if (units <= 300)
             return (100 * 1) + ((units - 100) * 2);
-
         return (100 * 1) + (200 * 2) + ((units - 300) * 5);
     }
 
@@ -50,15 +44,14 @@ class Smartpay implements Billable {
         return curr - prev;
     }
 
-    void printReceipt(Customer c) throws InvalidReadingException, InvalidUnitException {
-
+    void printReceipt(Customer c) throws InvalidReadingException {
         int units = calculateUnits(c.prevReading, c.currReading);
         double amount = calculateTotal(units);
 
         System.out.println("\n--- TGPDCL Electricity Bill ---\n");
         System.out.println("Customer Name : " + c.name);
         System.out.println("Units Consumed : " + units);
-        System.out.printf("Bill Amount : $ %.2f\n", amount);
+        System.out.printf("Bill Amount : ₹ %.2f\n", amount);
         System.out.println("\n--------------------------------\n");
     }
 
@@ -75,18 +68,30 @@ class Smartpay implements Billable {
                 break;
             }
 
-            try {
-                System.out.print("Enter previous meter reading: ");
-                int prev = Integer.parseInt(sc.nextLine());
-                System.out.print("Enter current meter reading: ");
-                int curr = Integer.parseInt(sc.nextLine());
+            while (true) {
+                try {
+                    System.out.print("Enter previous meter reading: ");
+                    int prev = sc.nextInt();
+                    sc.nextLine();
+                    if (prev < 0)
+                        throw new InvalidUnitException("Units cannot be negative.");
 
-                Customer c1 = new Customer(name, prev, curr);
-                s.printReceipt(c1);
-            } catch (InvalidReadingException | InvalidUnitException e) {
-                System.out.println("Error: " + e.getMessage());
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Enter numbers only.");
+                    System.out.print("Enter current meter reading: ");
+                    int curr = sc.nextInt();
+                    sc.nextLine();
+                    if (curr < 0)
+                        throw new InvalidUnitException("Units cannot be negative.");
+
+                    Customer c1 = new Customer(name, prev, curr);
+                    s.printReceipt(c1);
+                    break;
+
+                } catch (InvalidReadingException | InvalidUnitException e) {
+                    System.out.println("Error: " + e.getMessage());
+                } catch (Exception e) {
+                    System.out.println("Invalid input.");
+                    sc.nextLine();
+                }
             }
         }
 
